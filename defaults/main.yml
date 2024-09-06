@@ -11,6 +11,16 @@ backup_teleport_config: yes
 teleport_config_template: "default_teleport.yaml.j2"
 teleport_service_template: "default_teleport.service.j2"
 teleport_ssh_labels: []
+teleport_ssh_commands:
+  - name: hostname
+    command: [hostname]
+    period: 60m0s
+  - name: uptime
+    command: [uptime, -p]
+    period: 5m0s
+  - name: version
+    command: [teleport, version]
+    period: 60m0s
 teleport_proxy_server: ''
 teleport_control_systemd: yes
 teleport_template_config: yes
