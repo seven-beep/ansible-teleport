@@ -30,6 +30,7 @@ teleport_proxy_server: ""
 teleport_control_systemd: yes
 teleport_template_config: yes
 teleport_managed_updates: yes
+teleport_force_reinstall: no
 
 # Default dont change
 is_container: false

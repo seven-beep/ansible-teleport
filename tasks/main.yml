@@ -28,10 +28,11 @@
 
 - name: "Save the precedent configuration or erase database artifacts"
   ansible.builtin.include_tasks: auth_conf.yml
-  when: teleport_config_file.stat.exists
+  when: teleport_initial_version.failed is true or teleport_force_reinstall
 
 - name: "Dispatch on installation method"
   ansible.builtin.include_tasks: "{{ 'install_via_' + teleport_install_method + '.yml' }}"
+  when: teleport_initial_version.failed is true or teleport_force_reinstall
 
 - name: Create teleport config
   become: yes

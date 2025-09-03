@@ -8,7 +8,7 @@
         teleport_pkgs: >-
           {% if teleport_edition == "oss" %}teleport{%
              elif teleport_edition == "enterprise" %}teleport-ent{%
-             else %}teleport-ent=v{{ teleport_version }} teleport-ent-updater{% endif %}
+             else %}teleport-ent=v{{ teleport_version }}{% endif %}
 
     - name: "Install the pgp keys of info@gravitational.com"
       ansible.builtin.copy:
@@ -29,7 +29,7 @@
     - name: "Install teleport"
       ansible.builtin.apt:
         name: "{{ teleport_pkgs }}"
-        state: latest # noqa: package-latest
+        state: present
         force_apt_get: true
         update_cache: true
       notify: Reload_Teleport
