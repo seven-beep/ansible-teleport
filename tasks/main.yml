@@ -1,5 +1,4 @@
 ---
-
 - name: Set fact is_container
   ansible.builtin.set_fact:
     is_container: true
@@ -10,16 +9,16 @@
 
 - name: Check if teleport is already installed.
   ansible.builtin.command:
-    cmd: teleport version
-  ignore_errors: true
-  register: teleport_initial_version
+    cmd: which teleport
+  failed_when: teleport_installed.rc not in [0,1]
   changed_when: false
+  register: teleport_installed
 
 - name: "Lookup the cloud server version if none was provided"
   ansible.builtin.include_tasks: detect_cloud_version.yml
   when:
     - teleport_autodetect_version
-    - not teleport_version | string
+    - teleport_version != ""
 
 - name: "Check if a teleport configuration is present"
   ansible.builtin.stat:
@@ -28,10 +27,11 @@
 
 - name: "Save the precedent configuration or erase database artifacts"
   ansible.builtin.include_tasks: auth_conf.yml
-  when: teleport_config_file.stat.exists
+  when: teleport_config_file.stat.exists is true
 
 - name: "Dispatch on installation method"
   ansible.builtin.include_tasks: "{{ 'install_via_' + teleport_install_method + '.yml' }}"
+  when: teleport_installed.rc == 1 is true or teleport_force_reinstall
 
 - name: Create teleport config
   become: yes
