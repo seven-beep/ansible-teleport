@@ -1,0 +1,12 @@
+---
+- name: 'Register the teleport update status'
+  ansible.builtin.command:
+    cmd: 'teleport-update status'
+  register: teleport_update_status
+  changed_when: false
+
+- name: 'Enable teleport managed updates'
+  ansible.builtin.command:
+    cmd: 'teleport-update enable'
+  when: not (teleport_update_status.stdout | from_yaml)['enabled']
+  changed_when: true

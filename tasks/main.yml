@@ -8,6 +8,13 @@
       (ansible_virtualization_type == "docker" or ansible_virtualization_type == "containerd")
     )
 
+- name: Check if teleport is already installed.
+  ansible.builtin.command:
+    cmd: teleport version
+  ignore_errors: true
+  register: teleport_initial_version
+  changed_when: false
+
 - name: "Lookup the cloud server version if none was provided"
   ansible.builtin.include_tasks: detect_cloud_version.yml
   when:
@@ -41,3 +48,7 @@
 - name: "Configure systemd service"
   ansible.builtin.include_tasks: "systemd.yml"
   when: teleport_control_systemd
+
+- name: "Enable automatic updates"
+  ansible.builtin.include_tasks: "managed_updates.yml"
+  when: teleport_managed_updates

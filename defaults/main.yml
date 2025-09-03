@@ -29,7 +29,7 @@ teleport_ssh_commands:
 teleport_proxy_server: ""
 teleport_control_systemd: yes
 teleport_template_config: yes
-# Default dont change
-update_teleport: no
+teleport_managed_updates: yes
 
+# Default dont change
 is_container: false
