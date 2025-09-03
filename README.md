@@ -116,21 +116,34 @@ teleport_template_config
 ```
 Default `yes`. Controls if this role modifies the teleport config file.
 
+```
+teleport_managed_updates
+```
+Default `yes`. Controls if this role enable managed updates. See [Agent managed updates](https://goteleport.com/docs/upgrading/agent-managed-updates/) for more information.
+
+```
+teleport_force_reinstall
+```
+Default `no`. Force reinstallation if teleport is already installed.
+
 ## Upgrading Teleport
 
-For `tar` installation method, when the role is run, it checks if the installed version matches the version specified in `teleport_version`. If different then it will download the latest version and install it.
+If managed updates are enabled, teleport should update itself to your server version and no further action is done.
 
-For `apt` installation method, the role will update the packages from the repository.
+## Idempotence
 
 When performing an upgrade, a backup of the current configuration file in `teleport_config_path` will be created and a new configuration file templated in its place. When doing this a `teleport_auth_token` and `teleport_ca_pin` do not need to be provided, as they are pulled from the existing configuration file, and then templated into the new configuration file.
 
 This allows you to update values in the configuration file like labels and commands without having to store the auth token and ca pin.
 
+## Reloads
+
 This role reloads `teleport.service` after any of the following occur:
 
-- Teleport is installed or updated
+- Teleport is installed
 - Teleport configuration file is updated
 - Teleport service file is updated
+- Teleport managed updates are activated and an update if performed (albeit this reload should be gracefully handled by `teleport-update`)
 
 ## Dependencies
 
