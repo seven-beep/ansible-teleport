@@ -10,10 +10,11 @@
     old_conf: "{{ old_conf_raw['content'] | b64decode | from_yaml }}"
 
 - name: "Flush the teleport client information when the auth token has changed."
-  when:
-    - teleport_auth_token != ""
-    - old_conf.teleport.auth_token is defined
-    - old_conf.teleport.auth_token != ""
+  when: >-
+    (
+      teleport_auth_token != "" and old_conf.teleport.auth_token is defined
+      and old_conf.teleport.auth_token != ""
+    ) or teleport_force_reinstall
   notify: Reload_Teleport
   become: yes
   block:

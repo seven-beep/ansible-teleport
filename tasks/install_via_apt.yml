@@ -26,10 +26,18 @@
         group: "root"
         mode: "0644"
 
+    - name: "Un-install teleport"
+      ansible.builtin.apt:
+        name: "{{ teleport_pkgs }}"
+        state: "absent"
+        force_apt_get: true
+        update_cache: true
+      when: teleport_force_reinstall
+
     - name: "Install teleport"
       ansible.builtin.apt:
         name: "{{ teleport_pkgs }}"
-        state: present
+        state: "present"
         force_apt_get: true
         update_cache: true
       notify: Reload_Teleport
