@@ -18,7 +18,7 @@
   ansible.builtin.include_tasks: detect_cloud_version.yml
   when:
     - teleport_autodetect_version
-    - teleport_version != ""
+    - teleport_version == ""
 
 - name: "Check if a teleport configuration is present"
   ansible.builtin.stat:
