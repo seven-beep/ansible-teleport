@@ -35,7 +35,7 @@
     - name: "Install teleport"
       ansible.builtin.apt:
         name: "{{ teleport_pkgs }}"
-        state: "latest" # noqa: package-latest
+        state: "{{ 'latest' if teleport_update else 'present' }}" # noqa: package-latest
         force_apt_get: true
         update_cache: true
       notify: Reload_Teleport

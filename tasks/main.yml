@@ -9,7 +9,7 @@
 
 - name: Check if teleport is already installed.
   ansible.builtin.command:
-    cmd: which teleport
+    cmd: teleport version
   failed_when: teleport_installed.rc not in [0,1]
   changed_when: false
   register: teleport_installed
@@ -19,6 +19,12 @@
   when:
     - teleport_autodetect_version
     - teleport_version == ""
+
+- name: Set teleport_update
+  ansible.builtin.set_fact:
+    teleport_update: "{{ teleport_version not in teleport_installed.stdout }}"
+  when: teleport_installed.rc == 0
+  notify: Reload_Teleport
 
 - name: "Check if a teleport configuration is present"
   ansible.builtin.stat:
@@ -31,7 +37,6 @@
 
 - name: "Dispatch on installation method"
   ansible.builtin.include_tasks: "{{ 'install_via_' + teleport_install_method + '.yml' }}"
-  when: teleport_installed.rc == 1 is true or teleport_force_reinstall
 
 - name: Create teleport config
   become: yes
@@ -49,8 +54,22 @@
   ansible.builtin.include_tasks: "systemd.yml"
   when: teleport_control_systemd
 
+- name: 'Check teleport managed updates status'
+  ansible.builtin.command:
+    cmd: 'teleport-update status'
+  changed_when: false
+  # Unfortunately on v16, the first invocation of 'teleport-update status'
+  # before a 'teleport-update enable', will fails.
+  failed_when: false
+  register: teleport_managed_updates_status
+  when: teleport_managed_updates
+
 - name: 'Enable teleport managed updates'
   ansible.builtin.command:
     cmd: 'teleport-update enable'
   changed_when: true
-  when: teleport_managed_updates
+  when: >-
+    teleport_managed_updates and
+    teleport_managed_updates_status.stdout
+    | regex_search('enabled.*true', ignorecase=true)
+    is falsy
