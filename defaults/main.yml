@@ -1,7 +1,7 @@
 ---
 teleport_nodename: ""
 teleport_autodetect_version: false
-teleport_version: "{{ '18.1.8' if not teleport_autodetect_version }}"
+teleport_version: "{{ '18.1.8' if not teleport_autodetect_version else ''}}"
 teleport_architecture: "amd64-bin"
 # apt is supported.
 teleport_install_method: "tar"
