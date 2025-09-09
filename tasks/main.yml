@@ -23,8 +23,6 @@
 - name: Set teleport_update
   ansible.builtin.set_fact:
     teleport_update: "{{ teleport_version not in teleport_installed.stdout }}"
-  when: teleport_installed.rc == 0
-  notify: Reload_Teleport
 
 - name: "Check if a teleport configuration is present"
   ansible.builtin.stat:
