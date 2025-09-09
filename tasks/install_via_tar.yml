@@ -7,7 +7,7 @@
         src: "{{ teleport_url }}"
         dest: "/tmp"
         remote_src: yes
-      when: teleport_installed.rc == 1 or teleport_update
+      when: teleport_installed.rc in [1,2] or teleport_update
 
     - name: Install teleport
       ansible.builtin.command:  # noqa no-changed-when

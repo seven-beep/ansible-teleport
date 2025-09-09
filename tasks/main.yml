@@ -10,7 +10,7 @@
 - name: Check if teleport is already installed.
   ansible.builtin.command:
     cmd: teleport version
-  failed_when: teleport_installed.rc not in [0,1]
+  failed_when: teleport_installed.rc not in [0,1,2]
   changed_when: false
   register: teleport_installed
 
